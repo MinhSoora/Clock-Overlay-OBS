@@ -23,7 +23,24 @@
     <div>
 
       <div class="card">
-        <h2>Cấu hình chung</h2>
+        <h2>Style overlay</h2>
+        <div class="style-choice" id="style-choice">
+          <button type="button" class="choice-btn active" data-style="minimal">Minimal</button>
+          <button type="button" class="choice-btn" data-style="modern">Modern</button>
+          <button type="button" class="choice-btn" data-style="digital">Digital</button>
+          <button type="button" class="choice-btn" data-style="clean">Clean</button>
+          <button type="button" class="choice-btn" data-style="compact">Compact</button>
+          <button type="button" class="choice-btn" data-style="glass">Glass</button>
+          <button type="button" class="choice-btn" data-style="neon">Neon</button>
+          <button type="button" class="choice-btn" data-style="horizontal">Horizontal</button>
+          <button type="button" class="choice-btn" data-style="2lines">2 Lines</button>
+          <button type="button" class="choice-btn" data-style="3lines">3 Lines</button>
+        </div>
+        <div class="hint">Style quyết định bố cục nền / hiệu ứng (glow, kính mờ, viền...). Sau khi chọn style, bạn vẫn chỉnh chi tiết font, màu, spacing từng dòng bên dưới.</div>
+      </div>
+
+      <div class="card">
+        <h2>Thời gian / Ngày tháng</h2>
 
         <div class="field" id="field-timezone">
           <label for="input-timezone">Múi giờ (Timezone)</label>
@@ -52,40 +69,45 @@
         </div>
 
         <div class="field">
-          <label>Style overlay</label>
-          <div class="style-choice" id="style-choice">
-            <button type="button" class="choice-btn active" data-style="minimal">Minimal</button>
-            <button type="button" class="choice-btn" data-style="modern">Modern</button>
-            <button type="button" class="choice-btn" data-style="digital">Digital</button>
-            <button type="button" class="choice-btn" data-style="2lines">2 Lines</button>
-            <button type="button" class="choice-btn" data-style="3lines">3 Lines</button>
+          <label>Định dạng giờ</label>
+          <div class="format-choice" id="tf-choice">
+            <button type="button" class="choice-btn active" data-tf="24h">24 giờ (14:00)</button>
+            <button type="button" class="choice-btn" data-tf="12h">12 giờ (2:00 PM)</button>
           </div>
-          <div class="hint">Style chỉ đổi giao diện nền/hiệu ứng chữ. Bật/tắt số dòng chỉnh riêng ở khung "Nội dung từng dòng" bên dưới.</div>
         </div>
 
-        <div class="row-2">
-          <div class="field">
-            <label>Định dạng giờ</label>
-            <div class="format-choice" id="tf-choice">
-              <button type="button" class="choice-btn active" data-tf="24h">24 giờ (14:00)</button>
-              <button type="button" class="choice-btn" data-tf="12h">12 giờ (2:00 PM)</button>
-            </div>
-          </div>
-          <div class="field">
-            <label>Tuỳ chọn hiển thị</label>
-            <div class="toggles-row">
-              <label class="switch"><input type="checkbox" id="toggle-sec"> Giây</label>
-              <label class="switch"><input type="checkbox" id="toggle-date" checked> Ngày</label>
-              <label class="switch"><input type="checkbox" id="toggle-wd"> Thứ</label>
-              <label class="switch"><input type="checkbox" id="toggle-ampm" checked> AM/PM</label>
-            </div>
-            <div class="hint">Các tuỳ chọn này quyết định nội dung của placeholder <code>{time}</code>, <code>{date}</code>, <code>{weekday}</code>, <code>{ampm}</code>.</div>
-          </div>
+        <p class="mini-label">Thành phần hiển thị trong {time}</p>
+        <div class="toggles-row">
+          <label class="switch"><input type="checkbox" id="toggle-h" checked> Giờ</label>
+          <label class="switch"><input type="checkbox" id="toggle-min" checked> Phút</label>
+          <label class="switch"><input type="checkbox" id="toggle-sec"> Giây</label>
+          <label class="switch"><input type="checkbox" id="toggle-ms"> Mili giây</label>
+          <label class="switch"><input type="checkbox" id="toggle-ampm" checked> AM/PM</label>
         </div>
+
+        <hr class="section-divider">
+
+        <p class="mini-label">Placeholder khác</p>
+        <div class="toggles-row">
+          <label class="switch"><input type="checkbox" id="toggle-date" checked> {date}</label>
+          <label class="switch"><input type="checkbox" id="toggle-wd"> {weekday}</label>
+        </div>
+
+        <hr class="section-divider">
+
+        <label class="switch">
+          <input type="checkbox" id="toggle-stable" checked>
+          Giữ vị trí cố định khi số thay đổi (không bị nhảy chữ)
+        </label>
+        <div class="hint">Bật để các chữ số dùng độ rộng bằng nhau (tabular numbers) — phần chữ xung quanh sẽ không bị dịch chuyển khi giờ/phút/giây đổi số.</div>
       </div>
 
+    </div>
+
+    <!-- ============ MIDDLE: LINE BUILDER ============ -->
+    <div>
       <div class="card">
-        <h2>Nội dung từng dòng <span class="badge">Tối đa 3 dòng</span></h2>
+        <h2>Line Builder <span class="badge">Tối đa 3 dòng</span></h2>
 
         <div class="line-tabs" id="line-tabs">
           <button type="button" class="line-tab active on" data-line="0"><span class="dot"></span>Dòng 1</button>
@@ -121,11 +143,10 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- ============ RIGHT: PREVIEW ============ -->
-    <div>
+    <div class="sticky-col">
       <div class="card">
         <h2>Preview trực tiếp</h2>
         <div class="preview-panel">
@@ -153,6 +174,7 @@
   /* ---- Working state (deep clone of defaults) ---- */
   let state = cloneDefaultConfig();
   let activeLine = 0;
+  let tickTimer = null;
 
   const previewEls = {
     root: document.getElementById("overlay-root"),
@@ -198,15 +220,23 @@
   });
 
   /* ---- Global toggles ---- */
+  const toggleH = document.getElementById("toggle-h");
+  const toggleMin = document.getElementById("toggle-min");
   const toggleSec = document.getElementById("toggle-sec");
+  const toggleMs = document.getElementById("toggle-ms");
+  const toggleAmpm = document.getElementById("toggle-ampm");
   const toggleDate = document.getElementById("toggle-date");
   const toggleWd = document.getElementById("toggle-wd");
-  const toggleAmpm = document.getElementById("toggle-ampm");
+  const toggleStable = document.getElementById("toggle-stable");
 
-  toggleSec.addEventListener("change", () => { state.sec = toggleSec.checked; updatePreview(); });
+  toggleH.addEventListener("change", () => { state.showH = toggleH.checked; updatePreview(); });
+  toggleMin.addEventListener("change", () => { state.showMin = toggleMin.checked; updatePreview(); });
+  toggleSec.addEventListener("change", () => { state.showSec = toggleSec.checked; updatePreview(); });
+  toggleMs.addEventListener("change", () => { state.showMs = toggleMs.checked; updatePreview(); });
+  toggleAmpm.addEventListener("change", () => { state.ampm = toggleAmpm.checked; updatePreview(); });
   toggleDate.addEventListener("change", () => { state.date = toggleDate.checked; updatePreview(); });
   toggleWd.addEventListener("change", () => { state.wd = toggleWd.checked; updatePreview(); });
-  toggleAmpm.addEventListener("change", () => { state.ampm = toggleAmpm.checked; updatePreview(); });
+  toggleStable.addEventListener("change", () => { state.stable = toggleStable.checked; updatePreview(); });
 
   /* ---- Line tabs ---- */
   const lineTabs = document.querySelectorAll(".line-tab");
@@ -234,6 +264,7 @@
     const chip = document.createElement("button");
     chip.type = "button";
     chip.className = "chip";
+    chip.title = ph.hint;
     chip.textContent = ph.label;
     chip.addEventListener("click", () => {
       const input = document.getElementById(`line-content-${index}`);
@@ -265,10 +296,18 @@
           <input type="checkbox" id="line-enable-${index}" ${line.on ? "checked" : ""}>
           Hiện dòng này
         </label>
+        <label class="switch">
+          <input type="checkbox" id="line-italic-${index}" ${line.italic ? "checked" : ""}>
+          In nghiêng
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="line-shadow-${index}" ${line.shadow ? "checked" : ""}>
+          Đổ bóng
+        </label>
       </div>
 
       <div class="field">
-        <label for="line-content-${index}">Nội dung (dùng placeholder bên dưới để chèn nhanh)</label>
+        <label for="line-content-${index}">Text / template (dùng placeholder bên dưới để chèn nhanh)</label>
         <input type="text" id="line-content-${index}" value="${line.txt.replace(/"/g, "&quot;")}" autocomplete="off">
         <div class="placeholder-chips" id="line-chips-${index}"></div>
       </div>
@@ -310,6 +349,25 @@
           </div>
         </div>
       </div>
+
+      <div class="row-4">
+        <div class="field">
+          <label for="line-spacing-${index}">Letter spacing (px)</label>
+          <input type="number" id="line-spacing-${index}" value="${line.spacing}" min="-10" max="50" step="0.5">
+        </div>
+        <div class="field">
+          <label for="line-lh-${index}">Line height</label>
+          <input type="number" id="line-lh-${index}" value="${line.lineHeight}" min="0.8" max="3" step="0.05">
+        </div>
+        <div class="field">
+          <label for="line-opacity-${index}">Opacity <span class="range-value" id="line-opacity-val-${index}">${Math.round(line.opacity * 100)}%</span></label>
+          <input type="range" id="line-opacity-${index}" value="${line.opacity}" min="0" max="1" step="0.01">
+        </div>
+        <div class="field">
+          <label for="line-gap-${index}">Khoảng cách sau dòng (px)</label>
+          <input type="number" id="line-gap-${index}" value="${line.gap}" min="0" max="80">
+        </div>
+      </div>
     `;
 
     linePanelsWrap.appendChild(panel);
@@ -320,11 +378,18 @@
 
     /* Wire up controls */
     const elEnable = panel.querySelector(`#line-enable-${index}`);
+    const elItalic = panel.querySelector(`#line-italic-${index}`);
+    const elShadow = panel.querySelector(`#line-shadow-${index}`);
     const elContent = panel.querySelector(`#line-content-${index}`);
     const elFont = panel.querySelector(`#line-font-${index}`);
     const elSize = panel.querySelector(`#line-size-${index}`);
     const elWeight = panel.querySelector(`#line-weight-${index}`);
     const elColor = panel.querySelector(`#line-color-${index}`);
+    const elSpacing = panel.querySelector(`#line-spacing-${index}`);
+    const elLh = panel.querySelector(`#line-lh-${index}`);
+    const elOpacity = panel.querySelector(`#line-opacity-${index}`);
+    const elOpacityVal = panel.querySelector(`#line-opacity-val-${index}`);
+    const elGap = panel.querySelector(`#line-gap-${index}`);
     const alignBtns = panel.querySelectorAll(`#line-align-${index} .choice-btn`);
 
     elWeight.value = String(line.weight);
@@ -333,6 +398,14 @@
     elEnable.addEventListener("change", () => {
       state.lines[index].on = elEnable.checked;
       refreshLineTabDots();
+      updatePreview();
+    });
+    elItalic.addEventListener("change", () => {
+      state.lines[index].italic = elItalic.checked;
+      updatePreview();
+    });
+    elShadow.addEventListener("change", () => {
+      state.lines[index].shadow = elShadow.checked;
       updatePreview();
     });
     elContent.addEventListener("input", () => {
@@ -355,6 +428,23 @@
       state.lines[index].color = elColor.value;
       updatePreview();
     });
+    elSpacing.addEventListener("input", () => {
+      state.lines[index].spacing = clampNumber(elSpacing.value, -10, 50, DEFAULT_CONFIG.lines[index].spacing);
+      updatePreview();
+    });
+    elLh.addEventListener("input", () => {
+      state.lines[index].lineHeight = clampNumber(elLh.value, 0.8, 3, DEFAULT_CONFIG.lines[index].lineHeight);
+      updatePreview();
+    });
+    elOpacity.addEventListener("input", () => {
+      state.lines[index].opacity = clampNumber(elOpacity.value, 0, 1, DEFAULT_CONFIG.lines[index].opacity);
+      elOpacityVal.textContent = Math.round(state.lines[index].opacity * 100) + "%";
+      updatePreview();
+    });
+    elGap.addEventListener("input", () => {
+      state.lines[index].gap = clampNumber(elGap.value, 0, 80, DEFAULT_CONFIG.lines[index].gap);
+      updatePreview();
+    });
     alignBtns.forEach(b => {
       b.addEventListener("click", () => {
         alignBtns.forEach(x => x.classList.remove("active"));
@@ -364,20 +454,29 @@
       });
     });
 
-    return { elEnable, elContent, elFont, elSize, elWeight, elColor, alignBtns };
+    return {
+      elEnable, elItalic, elShadow, elContent, elFont, elSize, elWeight,
+      elColor, elSpacing, elLh, elOpacity, elOpacityVal, elGap, alignBtns
+    };
   }
 
   const linePanelRefs = [0, 1, 2].map(buildLinePanel);
 
-  /* ---- Preview update ---- */
+  /* ---- Preview update (auto-adjusts tick speed if {ms} is used) ---- */
   function updatePreview() {
     const ok = validateTimezone();
     const cfg = ok ? state : Object.assign({}, state, { tz: DEFAULT_CONFIG.tz });
     renderOverlay(cfg, previewEls);
+    scheduleTicking();
+  }
+
+  function scheduleTicking() {
+    if (tickTimer) clearInterval(tickTimer);
+    const interval = needsMsTicking(state) ? 50 : 1000;
+    tickTimer = setInterval(updatePreview, interval);
   }
 
   updatePreview();
-  setInterval(updatePreview, 1000);
   refreshLineTabDots();
 
   /* ---- Generate URL ---- */
@@ -419,19 +518,30 @@
     document.querySelectorAll("#tf-choice .choice-btn").forEach(b =>
       b.classList.toggle("active", b.dataset.tf === state.tf));
 
-    toggleSec.checked = state.sec;
+    toggleH.checked = state.showH;
+    toggleMin.checked = state.showMin;
+    toggleSec.checked = state.showSec;
+    toggleMs.checked = state.showMs;
+    toggleAmpm.checked = state.ampm;
     toggleDate.checked = state.date;
     toggleWd.checked = state.wd;
-    toggleAmpm.checked = state.ampm;
+    toggleStable.checked = state.stable;
 
     linePanelRefs.forEach((refs, index) => {
       const line = state.lines[index];
       refs.elEnable.checked = line.on;
+      refs.elItalic.checked = line.italic;
+      refs.elShadow.checked = line.shadow;
       refs.elContent.value = line.txt;
       refs.elFont.value = line.font;
       refs.elSize.value = line.size;
       refs.elWeight.value = String(line.weight);
       refs.elColor.value = line.color;
+      refs.elSpacing.value = line.spacing;
+      refs.elLh.value = line.lineHeight;
+      refs.elOpacity.value = line.opacity;
+      refs.elOpacityVal.textContent = Math.round(line.opacity * 100) + "%";
+      refs.elGap.value = line.gap;
       refs.alignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === line.align));
     });
 
