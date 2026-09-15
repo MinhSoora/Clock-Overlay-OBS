@@ -12,22 +12,22 @@
 </head>
 <body class="overlay-page">
 
-  <div id="overlay-root" class="overlay-stage layout-horizontal">
-    <span id="line1" class="line1"></span>
-    <span id="sep" class="sep"></span>
-    <span id="line2" class="line2"></span>
+  <div id="overlay-root" class="overlay-stage style-minimal">
+    <span id="line1" class="ov-line"></span>
+    <span id="line2" class="ov-line"></span>
+    <span id="line3" class="ov-line"></span>
   </div>
 
   <script src="script.js"></script>
   <script>
     (function () {
-      const cfg = getQueryParams();
+      const cfg = getConfigFromURL();
 
       const els = {
         root: document.getElementById("overlay-root"),
         line1: document.getElementById("line1"),
         line2: document.getElementById("line2"),
-        sep: document.getElementById("sep")
+        line3: document.getElementById("line3")
       };
 
       function tick() {
@@ -35,7 +35,8 @@
       }
 
       tick();
-      // Re-sync exactly on the second boundary, then every second.
+      // Re-sync exactly on the second boundary, then every second, so the
+      // clock never visibly drifts even if the browser source is reloaded.
       const msToNextSecond = 1000 - (Date.now() % 1000);
       setTimeout(function () {
         tick();
