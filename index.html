@@ -20,106 +20,108 @@
   <div class="layout-grid">
 
     <!-- ============ LEFT: CONFIG FORM ============ -->
-    <div class="card">
-      <h2>Cấu hình</h2>
+    <div>
 
-      <div class="field" id="field-timezone">
-        <label for="input-timezone">Múi giờ (Timezone)</label>
-        <input type="text" id="input-timezone" list="tz-list" value="Asia/Ho_Chi_Minh" autocomplete="off">
-        <datalist id="tz-list">
-          <option value="Asia/Ho_Chi_Minh">
-          <option value="Asia/Bangkok">
-          <option value="Asia/Singapore">
-          <option value="Asia/Tokyo">
-          <option value="Asia/Shanghai">
-          <option value="Asia/Seoul">
-          <option value="Asia/Kolkata">
-          <option value="Asia/Dubai">
-          <option value="Europe/London">
-          <option value="Europe/Paris">
-          <option value="Europe/Berlin">
-          <option value="America/New_York">
-          <option value="America/Los_Angeles">
-          <option value="America/Chicago">
-          <option value="Australia/Sydney">
-          <option value="Pacific/Auckland">
-          <option value="UTC">
-        </datalist>
-        <div class="error-msg">Múi giờ không hợp lệ. Ví dụ đúng: Asia/Ho_Chi_Minh</div>
-        <div class="hint">Nhập theo chuẩn IANA, ví dụ: Asia/Ho_Chi_Minh, America/New_York…</div>
-      </div>
+      <div class="card">
+        <h2>Cấu hình chung</h2>
 
-      <div class="field">
-        <label>Layout</label>
-        <div class="layout-choice">
-          <button type="button" class="choice-btn active" data-group="layout" data-value="horizontal">Horizontal (1 hàng)</button>
-          <button type="button" class="choice-btn" data-group="layout" data-value="2lines">2 Lines (2 hàng)</button>
+        <div class="field" id="field-timezone">
+          <label for="input-timezone">Múi giờ (Timezone)</label>
+          <input type="text" id="input-timezone" list="tz-list" value="Asia/Ho_Chi_Minh" autocomplete="off">
+          <datalist id="tz-list">
+            <option value="Asia/Ho_Chi_Minh">
+            <option value="Asia/Bangkok">
+            <option value="Asia/Singapore">
+            <option value="Asia/Tokyo">
+            <option value="Asia/Shanghai">
+            <option value="Asia/Seoul">
+            <option value="Asia/Kolkata">
+            <option value="Asia/Dubai">
+            <option value="Europe/London">
+            <option value="Europe/Paris">
+            <option value="Europe/Berlin">
+            <option value="America/New_York">
+            <option value="America/Los_Angeles">
+            <option value="America/Chicago">
+            <option value="Australia/Sydney">
+            <option value="Pacific/Auckland">
+            <option value="UTC">
+          </datalist>
+          <div class="error-msg">Múi giờ không hợp lệ. Ví dụ đúng: Asia/Ho_Chi_Minh</div>
+          <div class="hint">Nhập theo chuẩn IANA, ví dụ: Asia/Ho_Chi_Minh, America/New_York…</div>
         </div>
-      </div>
 
-      <div class="field">
-        <label>Định dạng thời gian</label>
-        <div class="format-choice" id="format-choice"></div>
-      </div>
-
-      <div class="row-2">
         <div class="field">
-          <label for="input-font">Font chữ</label>
-          <input type="text" id="input-font" value="Poppins" autocomplete="off">
-          <div class="hint">VD: Roboto, Poppins, Montserrat, Arial…</div>
+          <label>Style overlay</label>
+          <div class="style-choice" id="style-choice">
+            <button type="button" class="choice-btn active" data-style="minimal">Minimal</button>
+            <button type="button" class="choice-btn" data-style="modern">Modern</button>
+            <button type="button" class="choice-btn" data-style="digital">Digital</button>
+            <button type="button" class="choice-btn" data-style="2lines">2 Lines</button>
+            <button type="button" class="choice-btn" data-style="3lines">3 Lines</button>
+          </div>
+          <div class="hint">Style chỉ đổi giao diện nền/hiệu ứng chữ. Bật/tắt số dòng chỉnh riêng ở khung "Nội dung từng dòng" bên dưới.</div>
         </div>
-        <div class="field">
-          <label for="input-fonturl">Google Fonts URL (tùy chọn)</label>
-          <input type="text" id="input-fonturl" placeholder="https://fonts.googleapis.com/css2?family=...">
+
+        <div class="row-2">
+          <div class="field">
+            <label>Định dạng giờ</label>
+            <div class="format-choice" id="tf-choice">
+              <button type="button" class="choice-btn active" data-tf="24h">24 giờ (14:00)</button>
+              <button type="button" class="choice-btn" data-tf="12h">12 giờ (2:00 PM)</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Tuỳ chọn hiển thị</label>
+            <div class="toggles-row">
+              <label class="switch"><input type="checkbox" id="toggle-sec"> Giây</label>
+              <label class="switch"><input type="checkbox" id="toggle-date" checked> Ngày</label>
+              <label class="switch"><input type="checkbox" id="toggle-wd"> Thứ</label>
+              <label class="switch"><input type="checkbox" id="toggle-ampm" checked> AM/PM</label>
+            </div>
+            <div class="hint">Các tuỳ chọn này quyết định nội dung của placeholder <code>{time}</code>, <code>{date}</code>, <code>{weekday}</code>, <code>{ampm}</code>.</div>
+          </div>
         </div>
       </div>
 
-      <div class="row-3">
-        <div class="field">
-          <label for="input-size">Cỡ chữ (px)</label>
-          <input type="number" id="input-size" value="48" min="12" max="200">
+      <div class="card">
+        <h2>Nội dung từng dòng <span class="badge">Tối đa 3 dòng</span></h2>
+
+        <div class="line-tabs" id="line-tabs">
+          <button type="button" class="line-tab active on" data-line="0"><span class="dot"></span>Dòng 1</button>
+          <button type="button" class="line-tab on" data-line="1"><span class="dot"></span>Dòng 2</button>
+          <button type="button" class="line-tab" data-line="2"><span class="dot"></span>Dòng 3</button>
         </div>
-        <div class="field">
-          <label for="input-color">Màu chữ</label>
-          <input type="color" id="input-color" value="#ffffff">
+
+        <div id="line-panels"></div>
+      </div>
+
+      <div class="card">
+        <div class="buttons-row">
+          <button class="btn btn-primary" id="btn-generate">Generate Overlay Link</button>
+          <button class="btn btn-ghost" id="btn-reset">Reset</button>
         </div>
-        <div class="field">
-          <label for="input-shadow">Đổ bóng chữ</label>
-          <select id="input-shadow">
-            <option value="1" selected>Bật</option>
-            <option value="0">Tắt</option>
-          </select>
+
+        <div class="result-box" id="result-box" style="display:none;">
+          <label>URL Overlay của bạn <span class="badge">Dán vào OBS</span></label>
+          <div class="url-output">
+            <input type="text" id="output-url" readonly>
+            <button class="btn btn-secondary" id="btn-copy">Copy</button>
+          </div>
+          <div class="copy-feedback" id="copy-feedback">Đã copy vào clipboard!</div>
+
+          <div class="instructions">
+            <strong>Cách thêm vào OBS:</strong>
+            <ol>
+              <li>Trong OBS, ở mục <strong>Sources</strong>, bấm <strong>+</strong> → chọn <strong>Browser Source</strong>.</li>
+              <li>Dán URL overlay ở trên vào ô <strong>URL</strong>.</li>
+              <li>Đặt <strong>Width</strong> / <strong>Height</strong> phù hợp (VD: 800×200), tick <strong>Shutdown source when not visible</strong> tùy ý.</li>
+              <li>Bấm OK — nền overlay sẽ trong suốt và hiển thị đè lên video của bạn.</li>
+            </ol>
+          </div>
         </div>
       </div>
 
-      <div class="field" id="field-separator">
-        <label for="input-separator">Ký tự phân cách (chỉ dùng cho Horizontal)</label>
-        <input type="text" id="input-separator" value="•" maxlength="3">
-      </div>
-
-      <div class="buttons-row">
-        <button class="btn btn-primary" id="btn-generate">Generate Overlay Link</button>
-        <button class="btn btn-ghost" id="btn-reset">Reset</button>
-      </div>
-
-      <div class="result-box" id="result-box" style="display:none;">
-        <label>URL Overlay của bạn <span class="badge">Dán vào OBS</span></label>
-        <div class="url-output">
-          <input type="text" id="output-url" readonly>
-          <button class="btn btn-secondary" id="btn-copy">Copy</button>
-        </div>
-        <div class="copy-feedback" id="copy-feedback">Đã copy vào clipboard!</div>
-
-        <div class="instructions">
-          <strong>Cách thêm vào OBS:</strong>
-          <ol>
-            <li>Trong OBS, ở mục <strong>Sources</strong>, bấm <strong>+</strong> → chọn <strong>Browser Source</strong>.</li>
-            <li>Dán URL overlay ở trên vào ô <strong>URL</strong>.</li>
-            <li>Đặt <strong>Width</strong> / <strong>Height</strong> phù hợp (VD: 800×200), tick <strong>Shutdown source when not visible</strong> tùy ý.</li>
-            <li>Bấm OK — nền overlay sẽ trong suốt và hiển thị đè lên video của bạn.</li>
-          </ol>
-        </div>
-      </div>
     </div>
 
     <!-- ============ RIGHT: PREVIEW ============ -->
@@ -128,10 +130,10 @@
         <h2>Preview trực tiếp</h2>
         <div class="preview-panel">
           <span class="preview-tag">OBS Preview</span>
-          <div id="overlay-root" class="overlay-stage layout-horizontal">
-            <span id="line1" class="line1"></span>
-            <span id="sep" class="sep"></span>
-            <span id="line2" class="line2"></span>
+          <div id="overlay-root" class="overlay-stage style-minimal">
+            <span id="line1" class="ov-line"></span>
+            <span id="line2" class="ov-line"></span>
+            <span id="line3" class="ov-line"></span>
           </div>
         </div>
       </div>
@@ -139,110 +141,252 @@
 
   </div>
 
-  <footer class="note">Chạy hoàn toàn trên trình duyệt — không cần server hay database. Có thể host trên bất kỳ static hosting nào (GitHub Pages, Netlify, Vercel, Cloudflare Pages…).</footer>
+  <footer class="note">
+    Chạy hoàn toàn trên trình duyệt — không cần server hay database. Có thể host trên bất kỳ static hosting nào (GitHub Pages, Netlify, Vercel, Cloudflare Pages…).<br>
+    Made by MinhSoora - <a href="https://minhsoora.site" target="_blank" rel="noopener">minhsoora.site</a>
+  </footer>
 </div>
 
 <script src="script.js"></script>
 <script>
 (function () {
-  const state = {
-    layout: "horizontal",
-    format: "24h-date"
-  };
-
-  /* ---- Build format choice buttons from shared FORMATS list ---- */
-  const formatChoiceEl = document.getElementById("format-choice");
-  FORMATS.forEach(f => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "choice-btn" + (f.id === state.format ? " active" : "");
-    btn.dataset.group = "format";
-    btn.dataset.value = f.id;
-    btn.textContent = f.label;
-    formatChoiceEl.appendChild(btn);
-  });
-
-  /* ---- Choice-button (layout / format) handling ---- */
-  document.querySelectorAll(".choice-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const group = btn.dataset.group;
-      document.querySelectorAll(`.choice-btn[data-group="${group}"]`).forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      state[group] = btn.dataset.value;
-      toggleSeparatorField();
-      updatePreview();
-    });
-  });
-
-  function toggleSeparatorField() {
-    document.getElementById("field-separator").style.display =
-      state.layout === "2lines" ? "none" : "block";
-  }
-
-  /* ---- Inputs ---- */
-  const el = {
-    timezone: document.getElementById("input-timezone"),
-    font: document.getElementById("input-font"),
-    fontUrl: document.getElementById("input-fonturl"),
-    size: document.getElementById("input-size"),
-    color: document.getElementById("input-color"),
-    shadow: document.getElementById("input-shadow"),
-    separator: document.getElementById("input-separator")
-  };
+  /* ---- Working state (deep clone of defaults) ---- */
+  let state = cloneDefaultConfig();
+  let activeLine = 0;
 
   const previewEls = {
     root: document.getElementById("overlay-root"),
     line1: document.getElementById("line1"),
     line2: document.getElementById("line2"),
-    sep: document.getElementById("sep")
+    line3: document.getElementById("line3")
   };
 
+  /* ---- Timezone field ---- */
+  const tzInput = document.getElementById("input-timezone");
+  const tzField = document.getElementById("field-timezone");
+
   function validateTimezone() {
-    const field = document.getElementById("field-timezone");
-    const ok = isValidTimezone(el.timezone.value.trim());
-    field.classList.toggle("invalid", !ok);
+    const ok = isValidTimezone(tzInput.value.trim());
+    tzField.classList.toggle("invalid", !ok);
     return ok;
   }
 
-  function gatherConfig() {
-    return {
-      timezone: el.timezone.value.trim() || DEFAULTS.timezone,
-      layout: state.layout,
-      format: state.format,
-      font: el.font.value.trim() || DEFAULTS.font,
-      fontUrl: el.fontUrl.value.trim(),
-      size: el.size.value || DEFAULTS.size,
-      color: el.color.value || DEFAULTS.color,
-      shadow: el.shadow.value,
-      separator: el.separator.value || DEFAULTS.separator
-    };
-  }
-
-  function updatePreview() {
+  tzInput.addEventListener("input", () => {
     validateTimezone();
-    const cfg = gatherConfig();
-    renderOverlay(isValidTimezone(cfg.timezone) ? cfg : Object.assign({}, cfg, { timezone: DEFAULTS.timezone }), previewEls);
-  }
-
-  /* Live update on any change */
-  Object.values(el).forEach(input => {
-    input.addEventListener("input", updatePreview);
-    input.addEventListener("change", updatePreview);
+    state.tz = tzInput.value.trim() || DEFAULT_CONFIG.tz;
+    updatePreview();
   });
 
-  /* Tick every second */
+  /* ---- Style choice ---- */
+  document.querySelectorAll("#style-choice .choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#style-choice .choice-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.style = btn.dataset.style;
+      updatePreview();
+    });
+  });
+
+  /* ---- Time format choice ---- */
+  document.querySelectorAll("#tf-choice .choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#tf-choice .choice-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.tf = btn.dataset.tf;
+      updatePreview();
+    });
+  });
+
+  /* ---- Global toggles ---- */
+  const toggleSec = document.getElementById("toggle-sec");
+  const toggleDate = document.getElementById("toggle-date");
+  const toggleWd = document.getElementById("toggle-wd");
+  const toggleAmpm = document.getElementById("toggle-ampm");
+
+  toggleSec.addEventListener("change", () => { state.sec = toggleSec.checked; updatePreview(); });
+  toggleDate.addEventListener("change", () => { state.date = toggleDate.checked; updatePreview(); });
+  toggleWd.addEventListener("change", () => { state.wd = toggleWd.checked; updatePreview(); });
+  toggleAmpm.addEventListener("change", () => { state.ampm = toggleAmpm.checked; updatePreview(); });
+
+  /* ---- Line tabs ---- */
+  const lineTabs = document.querySelectorAll(".line-tab");
+  lineTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      activeLine = Number(tab.dataset.line);
+      lineTabs.forEach(t => t.classList.toggle("active", Number(t.dataset.line) === activeLine));
+      document.querySelectorAll(".line-panel").forEach(p => {
+        p.classList.toggle("active", Number(p.dataset.line) === activeLine);
+      });
+    });
+  });
+
+  function refreshLineTabDots() {
+    lineTabs.forEach(tab => {
+      const idx = Number(tab.dataset.line);
+      tab.classList.toggle("on", !!state.lines[idx].on);
+    });
+  }
+
+  /* ---- Build the 3 line-editor panels dynamically ---- */
+  const linePanelsWrap = document.getElementById("line-panels");
+
+  function buildChip(ph, index) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = ph.label;
+    chip.addEventListener("click", () => {
+      const input = document.getElementById(`line-content-${index}`);
+      insertAtCursor(input, ph.label);
+    });
+    return chip;
+  }
+
+  function insertAtCursor(input, text) {
+    const start = (input.selectionStart != null) ? input.selectionStart : input.value.length;
+    const end = (input.selectionEnd != null) ? input.selectionEnd : input.value.length;
+    input.value = input.value.slice(0, start) + text + input.value.slice(end);
+    const pos = start + text.length;
+    input.focus();
+    input.setSelectionRange(pos, pos);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function buildLinePanel(index) {
+    const panel = document.createElement("div");
+    panel.className = "line-panel" + (index === 0 ? " active" : "");
+    panel.dataset.line = String(index);
+
+    const line = state.lines[index];
+
+    panel.innerHTML = `
+      <div class="line-panel-head">
+        <label class="switch">
+          <input type="checkbox" id="line-enable-${index}" ${line.on ? "checked" : ""}>
+          Hiện dòng này
+        </label>
+      </div>
+
+      <div class="field">
+        <label for="line-content-${index}">Nội dung (dùng placeholder bên dưới để chèn nhanh)</label>
+        <input type="text" id="line-content-${index}" value="${line.txt.replace(/"/g, "&quot;")}" autocomplete="off">
+        <div class="placeholder-chips" id="line-chips-${index}"></div>
+      </div>
+
+      <div class="row-3">
+        <div class="field">
+          <label for="line-font-${index}">Font</label>
+          <input type="text" id="line-font-${index}" value="${line.font}" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="line-size-${index}">Cỡ chữ (px)</label>
+          <input type="number" id="line-size-${index}" value="${line.size}" min="8" max="300">
+        </div>
+        <div class="field">
+          <label for="line-weight-${index}">Độ đậm</label>
+          <select id="line-weight-${index}">
+            <option value="300">300 - Light</option>
+            <option value="400">400 - Regular</option>
+            <option value="500">500 - Medium</option>
+            <option value="600">600 - SemiBold</option>
+            <option value="700">700 - Bold</option>
+            <option value="800">800 - ExtraBold</option>
+            <option value="900">900 - Black</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="line-color-${index}">Màu chữ</label>
+          <input type="color" id="line-color-${index}" value="${line.color}">
+        </div>
+        <div class="field">
+          <label>Căn lề</label>
+          <div class="align-choice" id="line-align-${index}">
+            <button type="button" class="choice-btn" data-align="left">Trái</button>
+            <button type="button" class="choice-btn" data-align="center">Giữa</button>
+            <button type="button" class="choice-btn" data-align="right">Phải</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    linePanelsWrap.appendChild(panel);
+
+    /* Fill placeholder chips */
+    const chipsWrap = panel.querySelector(`#line-chips-${index}`);
+    PLACEHOLDERS.forEach(ph => chipsWrap.appendChild(buildChip(ph, index)));
+
+    /* Wire up controls */
+    const elEnable = panel.querySelector(`#line-enable-${index}`);
+    const elContent = panel.querySelector(`#line-content-${index}`);
+    const elFont = panel.querySelector(`#line-font-${index}`);
+    const elSize = panel.querySelector(`#line-size-${index}`);
+    const elWeight = panel.querySelector(`#line-weight-${index}`);
+    const elColor = panel.querySelector(`#line-color-${index}`);
+    const alignBtns = panel.querySelectorAll(`#line-align-${index} .choice-btn`);
+
+    elWeight.value = String(line.weight);
+    alignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === line.align));
+
+    elEnable.addEventListener("change", () => {
+      state.lines[index].on = elEnable.checked;
+      refreshLineTabDots();
+      updatePreview();
+    });
+    elContent.addEventListener("input", () => {
+      state.lines[index].txt = elContent.value;
+      updatePreview();
+    });
+    elFont.addEventListener("input", () => {
+      state.lines[index].font = elFont.value.trim() || DEFAULT_CONFIG.lines[index].font;
+      updatePreview();
+    });
+    elSize.addEventListener("input", () => {
+      state.lines[index].size = clampNumber(elSize.value, 8, 300, DEFAULT_CONFIG.lines[index].size);
+      updatePreview();
+    });
+    elWeight.addEventListener("change", () => {
+      state.lines[index].weight = Number(elWeight.value);
+      updatePreview();
+    });
+    elColor.addEventListener("input", () => {
+      state.lines[index].color = elColor.value;
+      updatePreview();
+    });
+    alignBtns.forEach(b => {
+      b.addEventListener("click", () => {
+        alignBtns.forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        state.lines[index].align = b.dataset.align;
+        updatePreview();
+      });
+    });
+
+    return { elEnable, elContent, elFont, elSize, elWeight, elColor, alignBtns };
+  }
+
+  const linePanelRefs = [0, 1, 2].map(buildLinePanel);
+
+  /* ---- Preview update ---- */
+  function updatePreview() {
+    const ok = validateTimezone();
+    const cfg = ok ? state : Object.assign({}, state, { tz: DEFAULT_CONFIG.tz });
+    renderOverlay(cfg, previewEls);
+  }
+
   updatePreview();
   setInterval(updatePreview, 1000);
-  toggleSeparatorField();
+  refreshLineTabDots();
 
   /* ---- Generate URL ---- */
   document.getElementById("btn-generate").addEventListener("click", () => {
     if (!validateTimezone()) {
-      document.getElementById("input-timezone").focus();
+      tzInput.focus();
       return;
     }
-    const cfg = gatherConfig();
-    const url = buildOverlayURL(cfg, "overlay.html");
+    const url = buildOverlayURL(state, "overlay.html");
     const outputInput = document.getElementById("output-url");
     outputInput.value = url;
     document.getElementById("result-box").style.display = "block";
@@ -265,24 +409,34 @@
 
   /* ---- Reset ---- */
   document.getElementById("btn-reset").addEventListener("click", () => {
-    el.timezone.value = DEFAULTS.timezone;
-    el.font.value = DEFAULTS.font;
-    el.fontUrl.value = "";
-    el.size.value = DEFAULTS.size;
-    el.color.value = DEFAULTS.color;
-    el.shadow.value = DEFAULTS.shadow;
-    el.separator.value = DEFAULTS.separator;
+    state = cloneDefaultConfig();
 
-    state.layout = DEFAULTS.layout;
-    state.format = DEFAULTS.format;
-    document.querySelectorAll('.choice-btn[data-group="layout"]').forEach(b =>
-      b.classList.toggle("active", b.dataset.value === DEFAULTS.layout));
-    document.querySelectorAll('.choice-btn[data-group="format"]').forEach(b =>
-      b.classList.toggle("active", b.dataset.value === DEFAULTS.format));
+    tzInput.value = state.tz;
+    tzField.classList.remove("invalid");
 
-    document.getElementById("field-timezone").classList.remove("invalid");
+    document.querySelectorAll("#style-choice .choice-btn").forEach(b =>
+      b.classList.toggle("active", b.dataset.style === state.style));
+    document.querySelectorAll("#tf-choice .choice-btn").forEach(b =>
+      b.classList.toggle("active", b.dataset.tf === state.tf));
+
+    toggleSec.checked = state.sec;
+    toggleDate.checked = state.date;
+    toggleWd.checked = state.wd;
+    toggleAmpm.checked = state.ampm;
+
+    linePanelRefs.forEach((refs, index) => {
+      const line = state.lines[index];
+      refs.elEnable.checked = line.on;
+      refs.elContent.value = line.txt;
+      refs.elFont.value = line.font;
+      refs.elSize.value = line.size;
+      refs.elWeight.value = String(line.weight);
+      refs.elColor.value = line.color;
+      refs.alignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === line.align));
+    });
+
+    refreshLineTabDots();
     document.getElementById("result-box").style.display = "none";
-    toggleSeparatorField();
     updatePreview();
   });
 })();
