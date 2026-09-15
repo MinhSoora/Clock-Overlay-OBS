@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Overlay Generator cho OBS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="config-page">
+<div class="page-wrap">
+
+  <div class="topbar">
+    <div class="logo-dot"></div>
+    <div>
+      <h1>OBS Time Overlay Generator</h1>
+      <p>Tạo overlay đồng hồ / ngày tháng trong suốt, dùng trực tiếp trong OBS Browser Source — không cần backend.</p>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+
+    <!-- ============ LEFT: CONFIG FORM ============ -->
+    <div class="card">
+      <h2>Cấu hình</h2>
+
+      <div class="field" id="field-timezone">
+        <label for="input-timezone">Múi giờ (Timezone)</label>
+        <input type="text" id="input-timezone" list="tz-list" value="Asia/Ho_Chi_Minh" autocomplete="off">
+        <datalist id="tz-list">
+          <option value="Asia/Ho_Chi_Minh">
+          <option value="Asia/Bangkok">
+          <option value="Asia/Singapore">
+          <option value="Asia/Tokyo">
+          <option value="Asia/Shanghai">
+          <option value="Asia/Seoul">
+          <option value="Asia/Kolkata">
+          <option value="Asia/Dubai">
+          <option value="Europe/London">
+          <option value="Europe/Paris">
+          <option value="Europe/Berlin">
+          <option value="America/New_York">
+          <option value="America/Los_Angeles">
+          <option value="America/Chicago">
+          <option value="Australia/Sydney">
+          <option value="Pacific/Auckland">
+          <option value="UTC">
+        </datalist>
+        <div class="error-msg">Múi giờ không hợp lệ. Ví dụ đúng: Asia/Ho_Chi_Minh</div>
+        <div class="hint">Nhập theo chuẩn IANA, ví dụ: Asia/Ho_Chi_Minh, America/New_York…</div>
+      </div>
+
+      <div class="field">
+        <label>Layout</label>
+        <div class="layout-choice">
+          <button type="button" class="choice-btn active" data-group="layout" data-value="horizontal">Horizontal (1 hàng)</button>
+          <button type="button" class="choice-btn" data-group="layout" data-value="2lines">2 Lines (2 hàng)</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Định dạng thời gian</label>
+        <div class="format-choice" id="format-choice"></div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="input-font">Font chữ</label>
+          <input type="text" id="input-font" value="Poppins" autocomplete="off">
+          <div class="hint">VD: Roboto, Poppins, Montserrat, Arial…</div>
+        </div>
+        <div class="field">
+          <label for="input-fonturl">Google Fonts URL (tùy chọn)</label>
+          <input type="text" id="input-fonturl" placeholder="https://fonts.googleapis.com/css2?family=...">
+        </div>
+      </div>
+
+      <div class="row-3">
+        <div class="field">
+          <label for="input-size">Cỡ chữ (px)</label>
+          <input type="number" id="input-size" value="48" min="12" max="200">
+        </div>
+        <div class="field">
+          <label for="input-color">Màu chữ</label>
+          <input type="color" id="input-color" value="#ffffff">
+        </div>
+        <div class="field">
+          <label for="input-shadow">Đổ bóng chữ</label>
+          <select id="input-shadow">
+            <option value="1" selected>Bật</option>
+            <option value="0">Tắt</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="field-separator">
+        <label for="input-separator">Ký tự phân cách (chỉ dùng cho Horizontal)</label>
+        <input type="text" id="input-separator" value="•" maxlength="3">
+      </div>
+
+      <div class="buttons-row">
+        <button class="btn btn-primary" id="btn-generate">Generate Overlay Link</button>
+        <button class="btn btn-ghost" id="btn-reset">Reset</button>
+      </div>
+
+      <div class="result-box" id="result-box" style="display:none;">
+        <label>URL Overlay của bạn <span class="badge">Dán vào OBS</span></label>
+        <div class="url-output">
+          <input type="text" id="output-url" readonly>
+          <button class="btn btn-secondary" id="btn-copy">Copy</button>
+        </div>
+        <div class="copy-feedback" id="copy-feedback">Đã copy vào clipboard!</div>
+
+        <div class="instructions">
+          <strong>Cách thêm vào OBS:</strong>
+          <ol>
+            <li>Trong OBS, ở mục <strong>Sources</strong>, bấm <strong>+</strong> → chọn <strong>Browser Source</strong>.</li>
+            <li>Dán URL overlay ở trên vào ô <strong>URL</strong>.</li>
+            <li>Đặt <strong>Width</strong> / <strong>Height</strong> phù hợp (VD: 800×200), tick <strong>Shutdown source when not visible</strong> tùy ý.</li>
+            <li>Bấm OK — nền overlay sẽ trong suốt và hiển thị đè lên video của bạn.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RIGHT: PREVIEW ============ -->
+    <div>
+      <div class="card">
+        <h2>Preview trực tiếp</h2>
+        <div class="preview-panel">
+          <span class="preview-tag">OBS Preview</span>
+          <div id="overlay-root" class="overlay-stage layout-horizontal">
+            <span id="line1" class="line1"></span>
+            <span id="sep" class="sep"></span>
+            <span id="line2" class="line2"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">Chạy hoàn toàn trên trình duyệt — không cần server hay database. Có thể host trên bất kỳ static hosting nào (GitHub Pages, Netlify, Vercel, Cloudflare Pages…).</footer>
+</div>
+
+<script src="script.js"></script>
+<script>
+(function () {
+  const state = {
+    layout: "horizontal",
+    format: "24h-date"
+  };
+
+  /* ---- Build format choice buttons from shared FORMATS list ---- */
+  const formatChoiceEl = document.getElementById("format-choice");
+  FORMATS.forEach(f => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "choice-btn" + (f.id === state.format ? " active" : "");
+    btn.dataset.group = "format";
+    btn.dataset.value = f.id;
+    btn.textContent = f.label;
+    formatChoiceEl.appendChild(btn);
+  });
+
+  /* ---- Choice-button (layout / format) handling ---- */
+  document.querySelectorAll(".choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const group = btn.dataset.group;
+      document.querySelectorAll(`.choice-btn[data-group="${group}"]`).forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state[group] = btn.dataset.value;
+      toggleSeparatorField();
+      updatePreview();
+    });
+  });
+
+  function toggleSeparatorField() {
+    document.getElementById("field-separator").style.display =
+      state.layout === "2lines" ? "none" : "block";
+  }
+
+  /* ---- Inputs ---- */
+  const el = {
+    timezone: document.getElementById("input-timezone"),
+    font: document.getElementById("input-font"),
+    fontUrl: document.getElementById("input-fonturl"),
+    size: document.getElementById("input-size"),
+    color: document.getElementById("input-color"),
+    shadow: document.getElementById("input-shadow"),
+    separator: document.getElementById("input-separator")
+  };
+
+  const previewEls = {
+    root: document.getElementById("overlay-root"),
+    line1: document.getElementById("line1"),
+    line2: document.getElementById("line2"),
+    sep: document.getElementById("sep")
+  };
+
+  function validateTimezone() {
+    const field = document.getElementById("field-timezone");
+    const ok = isValidTimezone(el.timezone.value.trim());
+    field.classList.toggle("invalid", !ok);
+    return ok;
+  }
+
+  function gatherConfig() {
+    return {
+      timezone: el.timezone.value.trim() || DEFAULTS.timezone,
+      layout: state.layout,
+      format: state.format,
+      font: el.font.value.trim() || DEFAULTS.font,
+      fontUrl: el.fontUrl.value.trim(),
+      size: el.size.value || DEFAULTS.size,
+      color: el.color.value || DEFAULTS.color,
+      shadow: el.shadow.value,
+      separator: el.separator.value || DEFAULTS.separator
+    };
+  }
+
+  function updatePreview() {
+    validateTimezone();
+    const cfg = gatherConfig();
+    renderOverlay(isValidTimezone(cfg.timezone) ? cfg : Object.assign({}, cfg, { timezone: DEFAULTS.timezone }), previewEls);
+  }
+
+  /* Live update on any change */
+  Object.values(el).forEach(input => {
+    input.addEventListener("input", updatePreview);
+    input.addEventListener("change", updatePreview);
+  });
+
+  /* Tick every second */
+  updatePreview();
+  setInterval(updatePreview, 1000);
+  toggleSeparatorField();
+
+  /* ---- Generate URL ---- */
+  document.getElementById("btn-generate").addEventListener("click", () => {
+    if (!validateTimezone()) {
+      document.getElementById("input-timezone").focus();
+      return;
+    }
+    const cfg = gatherConfig();
+    const url = buildOverlayURL(cfg, "overlay.html");
+    const outputInput = document.getElementById("output-url");
+    outputInput.value = url;
+    document.getElementById("result-box").style.display = "block";
+    document.getElementById("result-box").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  /* ---- Copy button ---- */
+  document.getElementById("btn-copy").addEventListener("click", () => {
+    const outputInput = document.getElementById("output-url");
+    outputInput.select();
+    outputInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(outputInput.value).then(() => {
+      const fb = document.getElementById("copy-feedback");
+      fb.classList.add("show");
+      setTimeout(() => fb.classList.remove("show"), 1500);
+    }).catch(() => {
+      document.execCommand("copy");
+    });
+  });
+
+  /* ---- Reset ---- */
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    el.timezone.value = DEFAULTS.timezone;
+    el.font.value = DEFAULTS.font;
+    el.fontUrl.value = "";
+    el.size.value = DEFAULTS.size;
+    el.color.value = DEFAULTS.color;
+    el.shadow.value = DEFAULTS.shadow;
+    el.separator.value = DEFAULTS.separator;
+
+    state.layout = DEFAULTS.layout;
+    state.format = DEFAULTS.format;
+    document.querySelectorAll('.choice-btn[data-group="layout"]').forEach(b =>
+      b.classList.toggle("active", b.dataset.value === DEFAULTS.layout));
+    document.querySelectorAll('.choice-btn[data-group="format"]').forEach(b =>
+      b.classList.toggle("active", b.dataset.value === DEFAULTS.format));
+
+    document.getElementById("field-timezone").classList.remove("invalid");
+    document.getElementById("result-box").style.display = "none";
+    toggleSeparatorField();
+    updatePreview();
+  });
+})();
+</script>
+</body>
+</html>
