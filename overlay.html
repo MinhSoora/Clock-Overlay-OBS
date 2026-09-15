@@ -22,6 +22,7 @@
   <script>
     (function () {
       const cfg = getConfigFromURL();
+      let tickTimer = null;
 
       const els = {
         root: document.getElementById("overlay-root"),
@@ -34,14 +35,24 @@
         renderOverlay(cfg, els);
       }
 
+      function scheduleTicking() {
+        if (tickTimer) clearInterval(tickTimer);
+        // If any visible line uses {ms}, tick fast for a smooth counter.
+        // Otherwise tick once per second, aligned to the second boundary
+        // so the clock never visibly drifts.
+        if (needsMsTicking(cfg)) {
+          tickTimer = setInterval(tick, 50);
+        } else {
+          const msToNextSecond = 1000 - (Date.now() % 1000);
+          setTimeout(function () {
+            tick();
+            tickTimer = setInterval(tick, 1000);
+          }, msToNextSecond);
+        }
+      }
+
       tick();
-      // Re-sync exactly on the second boundary, then every second, so the
-      // clock never visibly drifts even if the browser source is reloaded.
-      const msToNextSecond = 1000 - (Date.now() % 1000);
-      setTimeout(function () {
-        tick();
-        setInterval(tick, 1000);
-      }, msToNextSecond);
+      scheduleTicking();
     })();
   </script>
 </body>
