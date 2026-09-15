@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi" class="overlay-html">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Overlay</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Extra safety so OBS always captures a transparent page even before CSS loads */
+  html, body { background: transparent !important; }
+</style>
+</head>
+<body class="overlay-page">
+
+  <div id="overlay-root" class="overlay-stage layout-horizontal">
+    <span id="line1" class="line1"></span>
+    <span id="sep" class="sep"></span>
+    <span id="line2" class="line2"></span>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    (function () {
+      const cfg = getQueryParams();
+
+      const els = {
+        root: document.getElementById("overlay-root"),
+        line1: document.getElementById("line1"),
+        line2: document.getElementById("line2"),
+        sep: document.getElementById("sep")
+      };
+
+      function tick() {
+        renderOverlay(cfg, els);
+      }
+
+      tick();
+      // Re-sync exactly on the second boundary, then every second.
+      const msToNextSecond = 1000 - (Date.now() % 1000);
+      setTimeout(function () {
+        tick();
+        setInterval(tick, 1000);
+      }, msToNextSecond);
+    })();
+  </script>
+</body>
+</html>
