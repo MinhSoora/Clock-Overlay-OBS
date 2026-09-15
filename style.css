@@ -34,7 +34,7 @@ body.config-page {
 }
 
 .page-wrap {
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 32px 20px 64px;
 }
@@ -69,12 +69,22 @@ body.config-page {
 
 .layout-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
   gap: 24px;
+  align-items: start;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .layout-grid { grid-template-columns: 1fr; }
+}
+
+.sticky-col {
+  position: sticky;
+  top: 20px;
+}
+
+@media (max-width: 900px) {
+  .sticky-col { position: static; }
 }
 
 .card {
@@ -95,6 +105,8 @@ body.config-page {
   font-weight: 700;
 }
 
+.card h2 .badge { text-transform: none; letter-spacing: 0; }
+
 .field {
   margin-bottom: 16px;
 }
@@ -111,6 +123,13 @@ body.config-page {
   font-size: 12px;
   color: var(--gray-400);
   margin-top: 4px;
+}
+
+.field .hint code {
+  background: var(--gray-100, #eef2f7);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", Consolas, monospace;
 }
 
 .field input[type="text"],
@@ -133,6 +152,11 @@ body.config-page {
   padding: 4px;
   height: 42px;
   cursor: pointer;
+}
+
+.field input[type="range"] {
+  width: 100%;
+  accent-color: var(--blue-600);
 }
 
 .field input:focus,
@@ -167,30 +191,45 @@ body.config-page {
   gap: 14px;
 }
 
-@media (max-width: 520px) {
-  .row-2, .row-3 { grid-template-columns: 1fr; }
+.row-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 14px;
 }
 
-.layout-choice, .style-choice, .format-choice, .align-choice {
+@media (max-width: 560px) {
+  .row-2, .row-3, .row-4 { grid-template-columns: 1fr 1fr; }
+}
+
+.layout-choice, .format-choice, .align-choice {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
-.style-choice { grid-template-columns: repeat(3, 1fr); }
+.style-choice {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
 .align-choice { grid-template-columns: repeat(3, 1fr); }
 
-@media (max-width: 520px) {
-  .format-choice, .style-choice { grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) {
+  .style-choice { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 420px) {
+  .format-choice { grid-template-columns: 1fr; }
+  .style-choice { grid-template-columns: repeat(2, 1fr); }
 }
 
 .choice-btn {
   border: 1.5px solid var(--gray-200);
   background: var(--gray-50);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--gray-600);
   text-align: center;
@@ -251,7 +290,7 @@ body.config-page {
   background:
     repeating-conic-gradient(#20304a 0% 25%, #182640 0% 50%) 50% / 24px 24px,
     linear-gradient(135deg, #14203a, #0b1526);
-  min-height: 220px;
+  min-height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -272,7 +311,7 @@ body.config-page {
 }
 
 .result-box {
-  margin-top: 20px;
+  margin-top: 4px;
 }
 
 .url-output {
@@ -331,6 +370,7 @@ footer.note {
   margin-top: 36px;
   color: var(--gray-400);
   font-size: 12.5px;
+  line-height: 1.8;
 }
 
 footer.note a {
@@ -388,6 +428,8 @@ footer.note a:hover { text-decoration: underline; }
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .switch {
@@ -436,8 +478,30 @@ footer.note a:hover { text-decoration: underline; }
 .toggles-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
   margin-top: 4px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px dashed var(--gray-200);
+  margin: 18px 0;
+}
+
+.mini-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-400);
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.range-value {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  color: var(--blue-700);
+  font-weight: 700;
 }
 
 /* ==========================================================================
@@ -448,19 +512,15 @@ footer.note a:hover { text-decoration: underline; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   white-space: nowrap;
 }
 
 .overlay-stage .ov-line {
   display: none;
-  line-height: 1.2;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.65);
 }
 
 /* Minimal — clean, no decoration */
-.overlay-stage.style-minimal { gap: 2px; }
-.overlay-stage.style-minimal .ov-line { text-shadow: 0 2px 8px rgba(0,0,0,0.65); }
+.overlay-stage.style-minimal { }
 
 /* Modern — soft dark pill container */
 .overlay-stage.style-modern {
@@ -470,11 +530,6 @@ footer.note a:hover { text-decoration: underline; }
   padding: 14px 26px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.12);
-  gap: 4px;
-}
-.overlay-stage.style-modern .ov-line {
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
 /* Digital — LCD / neon monospace look */
@@ -483,21 +538,52 @@ footer.note a:hover { text-decoration: underline; }
   padding: 12px 24px;
   border-radius: 10px;
   border: 1px solid rgba(90, 255, 170, 0.25);
-  gap: 2px;
 }
 .overlay-stage.style-digital .ov-line {
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  text-shadow: 0 0 10px currentColor, 0 0 2px rgba(0,0,0,0.6);
+}
+
+/* Clean — flat, no shadow feel, thin accent underline */
+.overlay-stage.style-clean {
+  padding-bottom: 6px;
+  border-bottom: 2px solid rgba(255,255,255,0.55);
+}
+
+/* Compact — tight, no padding, minimal footprint */
+.overlay-stage.style-compact {
+  padding: 2px 4px;
+}
+
+/* Glass — frosted glass card */
+.overlay-stage.style-glass {
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 18px;
+  padding: 16px 28px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+}
+
+/* Neon — glow box */
+.overlay-stage.style-neon {
+  background: rgba(8, 6, 20, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 14px 26px;
+}
+
+/* Horizontal — lines placed side by side */
+.overlay-stage.style-horizontal {
+  flex-direction: row;
+  align-items: baseline;
 }
 
 /* 2 Lines — tuned spacing for a two-row layout */
-.overlay-stage.style-2lines { gap: 0px; }
-.overlay-stage.style-2lines .ov-line { line-height: 1.1; }
+.overlay-stage.style-2lines { }
 
 /* 3 Lines — tighter spacing for a three-row layout */
-.overlay-stage.style-3lines { gap: -2px; }
-.overlay-stage.style-3lines .ov-line { line-height: 1.05; }
+.overlay-stage.style-3lines { }
 
 /* ---------- overlay.html (transparent, OBS-ready) ---------- */
 body.overlay-page {
