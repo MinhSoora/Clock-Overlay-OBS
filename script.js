@@ -5,26 +5,38 @@
 
 /* ---------- Placeholders ---------- */
 const PLACEHOLDERS = [
-  { key: "time",     label: "{time}" },
-  { key: "hour",     label: "{hour}" },
-  { key: "minute",   label: "{minute}" },
-  { key: "second",   label: "{second}" },
-  { key: "date",     label: "{date}" },
-  { key: "day",      label: "{day}" },
-  { key: "month",    label: "{month}" },
-  { key: "year",     label: "{year}" },
-  { key: "weekday",  label: "{weekday}" },
-  { key: "timezone", label: "{timezone}" },
-  { key: "offset",   label: "{offset}" },
-  { key: "ampm",     label: "{ampm}" }
+  { key: "time",     label: "{time}",     hint: "Giờ hoàn chỉnh" },
+  { key: "hour",     label: "{hour}",     hint: "Giờ" },
+  { key: "minute",   label: "{minute}",   hint: "Phút" },
+  { key: "second",   label: "{second}",   hint: "Giây" },
+  { key: "ms",       label: "{ms}",       hint: "Mili giây" },
+  { key: "date",     label: "{date}",     hint: "Ngày tháng năm" },
+  { key: "day",      label: "{day}",      hint: "Ngày" },
+  { key: "month",    label: "{month}",    hint: "Tháng" },
+  { key: "year",     label: "{year}",     hint: "Năm" },
+  { key: "weekday",  label: "{weekday}",  hint: "Thứ" },
+  { key: "timezone", label: "{timezone}", hint: "Tên timezone" },
+  { key: "tz",       label: "{tz}",       hint: "Timezone viết tắt" },
+  { key: "offset",   label: "{offset}",   hint: "UTC offset" },
+  { key: "ampm",     label: "{ampm}",     hint: "AM/PM" },
+  { key: "unix",     label: "{unix}",     hint: "Unix timestamp" }
 ];
 
 /* ---------- Style presets ---------- */
-const STYLE_VALUES = ["minimal", "modern", "digital", "2lines", "3lines"];
+const STYLE_VALUES = [
+  "minimal", "modern", "digital", "clean", "compact",
+  "glass", "neon", "horizontal", "2lines", "3lines"
+];
+
 const STYLE_LABELS = {
   minimal: "Minimal",
   modern: "Modern",
   digital: "Digital",
+  clean: "Clean",
+  compact: "Compact",
+  glass: "Glass",
+  neon: "Neon",
+  horizontal: "Horizontal",
   "2lines": "2 Lines",
   "3lines": "3 Lines"
 };
@@ -35,16 +47,20 @@ const WEIGHT_VALUES = [300, 400, 500, 600, 700, 800, 900];
 /* ---------- Default config ---------- */
 const DEFAULT_CONFIG = {
   tz: "Asia/Ho_Chi_Minh",
-  tf: "24h",       // "12h" | "24h"
-  sec: false,      // show seconds inside {time}
-  date: true,      // show {date}
-  wd: false,       // show {weekday}
-  ampm: true,      // show AM/PM inside {time} (12h only) and {ampm}
+  tf: "24h",        // "12h" | "24h"
+  showH: true,       // show hour component inside {time}
+  showMin: true,     // show minute component inside {time}
+  showSec: false,    // show second component inside {time}
+  showMs: false,     // show millisecond component inside {time}
+  date: true,        // enable {date}
+  wd: false,         // enable {weekday}
+  ampm: true,        // enable AM/PM inside {time} (12h) and {ampm}
+  stable: true,      // fixed-width digits so surrounding text never shifts
   style: "minimal",
   lines: [
-    { on: true,  txt: "{time}",    font: "Poppins", size: 48, weight: 700, color: "#ffffff", align: "center" },
-    { on: true,  txt: "{date}",    font: "Poppins", size: 20, weight: 600, color: "#ffffff", align: "center" },
-    { on: false, txt: "{weekday}", font: "Poppins", size: 16, weight: 500, color: "#ffffff", align: "center" }
+    { on: true,  txt: "{time}",    font: "Poppins", size: 48, weight: 700, italic: false, spacing: 0, lineHeight: 1.2, align: "center", opacity: 1,    color: "#ffffff", shadow: true, gap: 4 },
+    { on: true,  txt: "{date}",    font: "Poppins", size: 20, weight: 600, italic: false, spacing: 0, lineHeight: 1.2, align: "center", opacity: 0.92, color: "#ffffff", shadow: true, gap: 4 },
+    { on: false, txt: "{weekday}", font: "Poppins", size: 16, weight: 500, italic: false, spacing: 0, lineHeight: 1.2, align: "center", opacity: 0.85, color: "#ffffff", shadow: true, gap: 0 }
   ]
 };
 
@@ -64,6 +80,7 @@ function isValidTimezone(tz) {
 }
 
 function pad2(n) { return String(n).padStart(2, "0"); }
+function pad3(n) { return String(n).padStart(3, "0"); }
 
 function getOffsetString(tz) {
   try {
@@ -72,6 +89,15 @@ function getOffsetString(tz) {
     if (part && part.value) return part.value.replace("GMT", "UTC");
   } catch (e) { /* ignore, fall through */ }
   return "UTC";
+}
+
+function getTzAbbr(tz) {
+  try {
+    const dtf = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" });
+    const part = dtf.formatToParts(new Date()).find(p => p.type === "timeZoneName");
+    if (part && part.value) return part.value;
+  } catch (e) { /* ignore */ }
+  return getOffsetString(tz);
 }
 
 /* Build a parts object for a given timezone using Intl (accurate, DST-safe) */
@@ -105,21 +131,29 @@ function getTimeParts(timezone) {
     h12: pad2(h12num),
     min: parts.minute,
     sec: parts.second,
+    ms: pad3(now.getMilliseconds()),
     ampm,
     dd: parts.day,
     mm: parts.month,
     yyyy: parts.year,
     weekday: parts.weekday,
-    offset: getOffsetString(tz)
+    offset: getOffsetString(tz),
+    tzAbbr: getTzAbbr(tz),
+    unix: Math.floor(now.getTime() / 1000)
   };
 }
 
 /* ---------- Placeholder filling ---------- */
 function buildTimeString(parts, cfg) {
   const h = cfg.tf === "12h" ? parts.h12 : parts.h24;
-  let s = `${h}:${parts.min}`;
-  if (cfg.sec) s += `:${parts.sec}`;
-  if (cfg.tf === "12h" && cfg.ampm) s += ` ${parts.ampm}`;
+  const segments = [];
+  if (cfg.showH) segments.push(h);
+  if (cfg.showMin) segments.push(parts.min);
+  if (cfg.showSec) segments.push(parts.sec);
+
+  let s = segments.join(":");
+  if (cfg.showMs) s += (s ? "." : "") + parts.ms;
+  if (cfg.tf === "12h" && cfg.ampm && cfg.showH) s += (s ? " " : "") + parts.ampm;
   return s;
 }
 
@@ -130,25 +164,33 @@ function fillPlaceholders(template, parts, cfg) {
     hour: cfg.tf === "12h" ? parts.h12 : parts.h24,
     minute: parts.min,
     second: parts.sec,
+    ms: parts.ms,
     date: cfg.date ? `${parts.dd}/${parts.mm}/${parts.yyyy}` : "",
     day: parts.dd,
     month: parts.mm,
     year: parts.yyyy,
     weekday: cfg.wd ? parts.weekday : "",
     timezone: cfg.tz,
+    tz: parts.tzAbbr,
     offset: parts.offset,
-    ampm: cfg.ampm ? parts.ampm : ""
+    ampm: cfg.ampm ? parts.ampm : "",
+    unix: String(parts.unix)
   };
   return template.replace(/\{(\w+)\}/g, (m, key) => (
     Object.prototype.hasOwnProperty.call(map, key) ? map[key] : m
   ));
 }
 
+/* Does the current config need sub-second ticking? (any visible line uses {ms}) */
+function needsMsTicking(cfg) {
+  return cfg.lines.some(l => l.on && typeof l.txt === "string" && l.txt.indexOf("{ms}") !== -1);
+}
+
 /* ---------- Validation / sanitizing (used when reading from URL) ---------- */
 function clampNumber(n, min, max, fallback) {
   const num = Number(n);
   if (!Number.isFinite(num)) return fallback;
-  return Math.min(max, Math.max(min, Math.round(num)));
+  return Math.min(max, Math.max(min, num));
 }
 
 function isValidHexColor(c) {
@@ -163,8 +205,14 @@ function sanitizeLine(line, fallback) {
     font: (typeof line.font === "string" && line.font.trim() !== "") ? line.font.trim().slice(0, 60) : fallback.font,
     size: clampNumber(line.size, 8, 300, fallback.size),
     weight: WEIGHT_VALUES.includes(Number(line.weight)) ? Number(line.weight) : fallback.weight,
+    italic: typeof line.italic === "boolean" ? line.italic : fallback.italic,
+    spacing: clampNumber(line.spacing, -10, 50, fallback.spacing),
+    lineHeight: clampNumber(line.lineHeight, 0.8, 3, fallback.lineHeight),
     color: isValidHexColor(line.color) ? line.color : fallback.color,
-    align: ALIGN_VALUES.includes(line.align) ? line.align : fallback.align
+    align: ALIGN_VALUES.includes(line.align) ? line.align : fallback.align,
+    opacity: clampNumber(line.opacity, 0, 1, fallback.opacity),
+    shadow: typeof line.shadow === "boolean" ? line.shadow : fallback.shadow,
+    gap: clampNumber(line.gap, 0, 80, fallback.gap)
   };
 }
 
@@ -175,10 +223,14 @@ function sanitizeConfig(raw) {
   return {
     tz: isValidTimezone(raw.tz) ? raw.tz : d.tz,
     tf: raw.tf === "12h" ? "12h" : "24h",
-    sec: typeof raw.sec === "boolean" ? raw.sec : d.sec,
+    showH: typeof raw.showH === "boolean" ? raw.showH : d.showH,
+    showMin: typeof raw.showMin === "boolean" ? raw.showMin : d.showMin,
+    showSec: typeof raw.showSec === "boolean" ? raw.showSec : d.showSec,
+    showMs: typeof raw.showMs === "boolean" ? raw.showMs : d.showMs,
     date: typeof raw.date === "boolean" ? raw.date : d.date,
     wd: typeof raw.wd === "boolean" ? raw.wd : d.wd,
     ampm: typeof raw.ampm === "boolean" ? raw.ampm : d.ampm,
+    stable: typeof raw.stable === "boolean" ? raw.stable : d.stable,
     style: STYLE_VALUES.includes(raw.style) ? raw.style : d.style,
     lines: [0, 1, 2].map(i => sanitizeLine(rawLines[i], d.lines[i]))
   };
@@ -245,13 +297,26 @@ function applyFonts(fontNames) {
 /* ---------- Render ---------- */
 const ALIGN_TO_FLEX = { left: "flex-start", center: "center", right: "flex-end" };
 
+function shadowFor(style, enabled) {
+  if (!enabled) return "none";
+  if (style === "neon" || style === "digital") {
+    return "0 0 6px currentColor, 0 0 14px currentColor";
+  }
+  return "0 2px 8px rgba(0,0,0,0.6)";
+}
+
 /* els = { root, line1, line2, line3 } */
 function renderOverlay(cfg, els) {
   const parts = getTimeParts(cfg.tz);
 
   els.root.className = "overlay-stage style-" + cfg.style;
 
+  const isHorizontal = cfg.style === "horizontal";
   const fontsToLoad = [];
+  const lastIndex = (() => {
+    for (let i = 2; i >= 0; i--) if (cfg.lines[i].on) return i;
+    return -1;
+  })();
 
   cfg.lines.forEach((line, i) => {
     const el = els["line" + (i + 1)];
@@ -276,9 +341,23 @@ function renderOverlay(cfg, els) {
     el.style.fontFamily = fontFamily;
     el.style.fontSize = `${line.size}px`;
     el.style.fontWeight = String(line.weight);
+    el.style.fontStyle = line.italic ? "italic" : "normal";
+    el.style.letterSpacing = `${line.spacing}px`;
+    el.style.lineHeight = String(line.lineHeight);
     el.style.color = line.color;
+    el.style.opacity = String(line.opacity);
     el.style.textAlign = line.align;
     el.style.alignSelf = ALIGN_TO_FLEX[line.align] || "center";
+    el.style.textShadow = shadowFor(cfg.style, line.shadow);
+    el.style.fontVariantNumeric = cfg.stable ? "tabular-nums" : "normal";
+
+    if (isHorizontal) {
+      el.style.marginBottom = "0px";
+      el.style.marginRight = (i === lastIndex) ? "0px" : `${line.gap}px`;
+    } else {
+      el.style.marginRight = "0px";
+      el.style.marginBottom = (i === lastIndex) ? "0px" : `${line.gap}px`;
+    }
   });
 
   applyFonts(fontsToLoad);
