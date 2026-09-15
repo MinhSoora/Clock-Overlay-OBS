@@ -83,6 +83,7 @@ body.config-page {
   padding: 24px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--gray-200);
+  margin-bottom: 24px;
 }
 
 .card h2 {
@@ -170,14 +171,17 @@ body.config-page {
   .row-2, .row-3 { grid-template-columns: 1fr; }
 }
 
-.layout-choice, .format-choice {
+.layout-choice, .style-choice, .format-choice, .align-choice {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
+.style-choice { grid-template-columns: repeat(3, 1fr); }
+.align-choice { grid-template-columns: repeat(3, 1fr); }
+
 @media (max-width: 520px) {
-  .format-choice { grid-template-columns: 1fr; }
+  .format-choice, .style-choice { grid-template-columns: 1fr 1fr; }
 }
 
 .choice-btn {
@@ -189,7 +193,7 @@ body.config-page {
   font-size: 13px;
   font-weight: 600;
   color: var(--gray-600);
-  text-align: left;
+  text-align: center;
   transition: all .15s ease;
 }
 
@@ -329,54 +333,171 @@ footer.note {
   font-size: 12.5px;
 }
 
+footer.note a {
+  color: var(--blue-600);
+  text-decoration: none;
+  font-weight: 600;
+}
+footer.note a:hover { text-decoration: underline; }
+
+/* ---------- Line editor (tabs + panels) ---------- */
+.line-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.line-tab {
+  flex: 1;
+  position: relative;
+  border: 1.5px solid var(--gray-200);
+  background: var(--gray-50);
+  border-radius: 10px;
+  padding: 10px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-600);
+  transition: all .15s ease;
+}
+
+.line-tab:hover { border-color: var(--blue-500); }
+
+.line-tab.active {
+  border-color: var(--blue-500);
+  background: var(--blue-100);
+  color: var(--blue-700);
+}
+
+.line-tab .dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gray-400);
+  margin-right: 6px;
+}
+
+.line-tab.on .dot { background: #1a9a5a; }
+
+.line-panel { display: none; }
+.line-panel.active { display: block; }
+
+.line-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  user-select: none;
+}
+
+.switch input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue-600);
+  cursor: pointer;
+}
+
+.placeholder-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  border: 1.5px solid var(--gray-200);
+  background: var(--gray-50);
+  color: var(--blue-700);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.chip:hover {
+  border-color: var(--blue-500);
+  background: var(--blue-100);
+}
+
+.toggles-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
+
 /* ==========================================================================
    Overlay renderer (shared between preview box and overlay.html)
    ========================================================================== */
 .overlay-stage {
-  --overlay-font: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
-  --overlay-size: 48px;
-  --overlay-color: #ffffff;
-  --overlay-shadow: 0 2px 8px rgba(0,0,0,0.65);
-
-  font-family: var(--overlay-font);
-  color: var(--overlay-color);
-  display: inline-flex;
-  align-items: baseline;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  text-shadow: var(--overlay-shadow);
-  line-height: 1.25;
+  gap: 2px;
   white-space: nowrap;
 }
 
-.overlay-stage.layout-horizontal {
-  flex-direction: row;
-  font-size: var(--overlay-size);
-  font-weight: 700;
+.overlay-stage .ov-line {
+  display: none;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.65);
 }
 
-.overlay-stage.layout-horizontal .line2 {
-  font-size: 0.55em;
-  font-weight: 600;
-  opacity: 0.92;
+/* Minimal — clean, no decoration */
+.overlay-stage.style-minimal { gap: 2px; }
+.overlay-stage.style-minimal .ov-line { text-shadow: 0 2px 8px rgba(0,0,0,0.65); }
+
+/* Modern — soft dark pill container */
+.overlay-stage.style-modern {
+  background: rgba(10, 16, 30, 0.38);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 14px 26px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  gap: 4px;
+}
+.overlay-stage.style-modern .ov-line {
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
-.overlay-stage.layout-2lines {
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+/* Digital — LCD / neon monospace look */
+.overlay-stage.style-digital {
+  background: rgba(4, 10, 8, 0.45);
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 1px solid rgba(90, 255, 170, 0.25);
+  gap: 2px;
+}
+.overlay-stage.style-digital .ov-line {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 10px currentColor, 0 0 2px rgba(0,0,0,0.6);
 }
 
-.overlay-stage.layout-2lines .line1 {
-  font-size: var(--overlay-size);
-  font-weight: 700;
-}
+/* 2 Lines — tuned spacing for a two-row layout */
+.overlay-stage.style-2lines { gap: 0px; }
+.overlay-stage.style-2lines .ov-line { line-height: 1.1; }
 
-.overlay-stage.layout-2lines .line2 {
-  font-size: calc(var(--overlay-size) * 0.42);
-  font-weight: 600;
-  opacity: 0.92;
-  margin-top: 2px;
-}
+/* 3 Lines — tighter spacing for a three-row layout */
+.overlay-stage.style-3lines { gap: -2px; }
+.overlay-stage.style-3lines .ov-line { line-height: 1.05; }
 
 /* ---------- overlay.html (transparent, OBS-ready) ---------- */
 body.overlay-page {
